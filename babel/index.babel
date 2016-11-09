@@ -1,0 +1,85 @@
+
+// marked output 
+class ReactMarkdown extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {text : ''};
+  } 
+  render(){
+    return (
+         <div dangerouslySetInnerHTML={{
+        __html: marked(this.props.text)
+      }}></div>  
+    );
+  }
+} 
+
+function getDefaultText() {
+    return [
+        '# markdown-editor', '',
+        'You are free to use this if you feel the Need', '',
+        '**some text**',
+        '','## Learn how to output unordered list', '',
+        '* unordered list:',
+        '  * first item',
+        '  * second item',
+        '  * third item'
+    ].join('\n');
+}
+
+
+var initialSource = getDefaultText();
+
+// user editor  
+class Editor extends React.Component {
+  
+  handleChange(e){
+    const val = e.target.value;
+    this.props.onChange(val);
+  }
+  render() {
+    return (
+    <textarea onChange={this.handleChange.bind(this)} defaultValue={initialSource}/>
+   );
+  }
+}  
+
+class MarkdownEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {text : initialSource};
+  }
+  
+   onChange(text) {
+     this.setState({text});
+   }
+  
+  render() {
+    return(
+      <div className="wrapper-div">
+       <div className="children-div">
+         <span>Editor</span>
+          <Editor onChange={this.onChange.bind(this)}/>
+        </div> 
+        <div className="children-div">
+          <span>Markdown</span>
+          <ReactMarkdown text={this.state.text} />
+        </div>
+      </div>
+    );
+  }
+}
+
+Editor.propTypes = {
+   onChange: React.PropTypes.func.isRequired
+}
+
+ReactMarkdown.propTypes = {
+    text: React.PropTypes.string
+ }
+ReactMarkdown.defaultProps = {
+   text: ''
+}
+React.render(<MarkdownEditor />, document.getElementById('app'));
+
+
